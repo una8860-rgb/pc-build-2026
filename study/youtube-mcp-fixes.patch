@@ -1,0 +1,165 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index c6750c0..7c48fdb 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -23,5 +23,5 @@ dependencies = [
+     "python-dotenv>=1.0.0",
+     "pytube2>=15.0.12",
+     "youtube-search>=2.1.2",
+-    "youtube-transcript-api==0.6.3",
++    "youtube-transcript-api>=1.2.4",
+ ]
+diff --git a/server.py b/server.py
+index 28d2261..d53786d 100644
+--- a/server.py
++++ b/server.py
+@@ -1,11 +1,12 @@
+ import os, sys
+ from typing import List
+ from mcp.server import Server
+-from mcp.types import Tool, TextContent, ListToolsResult, INVALID_PARAMS
++from mcp.types import Tool, TextContent, ListToolsResult, ErrorData, INVALID_PARAMS
+ from mcp.server.stdio import stdio_server
+ from mcp.shared.exceptions import McpError
+ from langchain_community.tools import YouTubeSearchTool
+ from langchain_community.document_loaders import YoutubeLoader
++from youtube_transcript_api import YouTubeTranscriptApi
+ from langchain_google_genai import GoogleGenerativeAIEmbeddings
+ import lancedb
+ import asyncio
+@@ -40,7 +41,7 @@ console_handler.setFormatter(formatter)
+ logger.addHandler(console_handler)
+ 
+ # Create and add file handler for logging to file
+-file_handler = logging.FileHandler(log_filepath)
++file_handler = logging.FileHandler(log_filepath, encoding="utf-8")
+ file_handler.setFormatter(formatter)
+ logger.addHandler(file_handler)
+ 
+@@ -55,11 +56,20 @@ async def serve(read, write, options):
+     youtube_search = YouTubeSearchTool()
+     logger.debug("Initialized YouTube Search Tool")
+     
+-    embeddings = GoogleGenerativeAIEmbeddings(
+-        model="models/embedding-001",
+-        google_api_key=os.getenv("GOOGLE_API_KEY"),
+-        task_type="retrieval_document"  # Set default task type for document storage
+-    )
++    _embeddings = None
++
++    def get_embeddings() -> GoogleGenerativeAIEmbeddings:
++        """Create the embeddings client on first use so search/transcript tools work without GOOGLE_API_KEY."""
++        nonlocal _embeddings
++        if _embeddings is None:
++            if not os.getenv("GOOGLE_API_KEY"):
++                raise ValueError("GOOGLE_API_KEY is not set (add it to .env)")
++            _embeddings = GoogleGenerativeAIEmbeddings(
++                model="models/gemini-embedding-001",
++                google_api_key=os.getenv("GOOGLE_API_KEY"),
++                task_type="retrieval_document"  # Set default task type for document storage
++            )
++        return _embeddings
+     logger.debug("Initialized Google Generative AI Embeddings")
+     
+     db = lancedb.connect('youtube_db')
+@@ -85,12 +95,20 @@ async def serve(read, write, options):
+     
+     def clean_text(text: str) -> str:
+         """Clean text to remove problematic characters."""
+-        try:
+-            # Replace emojis and special characters with their text equivalents
+-            # or remove them if no good replacement exists
+-            return text.encode('ascii', 'ignore').decode('ascii')
+-        except Exception:
+-            return str(text)
++        text = str(text).encode("utf-8", "ignore").decode("utf-8")
++        return "".join(ch for ch in text if ch.isprintable() or ch in "\n\t")
++
++    transcript_api = YouTubeTranscriptApi()
++
++    def fetch_transcript(video_url: str) -> str:
++        """Fetch a transcript, preferring Korean, then English, then any available language."""
++        video_id = YoutubeLoader.extract_video_id(video_url)
++        transcripts = list(transcript_api.list(video_id))
++        preferred = ["ko", "en"]
++        transcripts.sort(key=lambda t: (preferred.index(t.language_code) if t.language_code in preferred else len(preferred), t.is_generated))
++        if not transcripts:
++            return ""
++        return " ".join(snippet.text for snippet in transcripts[0].fetch())
+ 
+     # Register the list_tools handler
+     @server.list_tools()
+@@ -164,44 +182,23 @@ async def serve(read, write, options):
+                 return [TextContent(type="text", text=cleaned_results)]
+             
+             elif name == "get-transcript":
+-                languages = ["en", "es", "fr", "pt", "it", "id", "de", "zh", "ko", "ja", "ar", "hi", "bn", "sw", "yo"]  # English, Spanish, French, Portuguese, Italian, Indonesian, German, Chinese, Korean, Japanese, Arabic, Hindi, Bengali, Swahili, Yoruba
+-                # Extract video_id from URL, handling URLs with additional parameters
+                 video_url = arguments["video_url"] if len(arguments["video_url"].split("&")) == 1 else arguments["video_url"].split("&")[0]  # Extract video_id from URL when the url is like https://www.youtube.com/watch?v=VIDEO_ID&...
+-                # Use YoutubeLoader with languages parameter
+-                loader = YoutubeLoader.from_youtube_url(
+-                    youtube_url=video_url,
+-                    language=languages,
+-                    add_video_info=False,
+-                    continue_on_failure=True
+-                )
+-                # Load transcript and extract text
+-                documents = loader.load()
+-                if documents:
+-                    transcript_text = documents[0].page_content
++                transcript_text = fetch_transcript(video_url)
++                if transcript_text:
+                     cleaned_transcript = clean_text(transcript_text)
+                     return [TextContent(type="text", text=cleaned_transcript)]
+                 else:
+                     return [TextContent(type="text", text="No transcript found for this video.")]
+             
+             elif name == "store-video-info":
+-                languages = ["en", "es", "fr", "pt", "it", "id", "de", "zh", "ko", "ja", "ar", "hi", "bn", "sw", "yo"]
+-                # Extract video_id from URL, handling URLs with additional parameters
+                 video_url = arguments["video_url"] if len(arguments["video_url"].split("&")) == 1 else arguments["video_url"].split("&")[0]  # Extract video_id from URL when the url is like https://www.youtube.com/watch?v=VIDEO_ID&...
+-                # Use YoutubeLoader with languages parameter
+-                loader = YoutubeLoader.from_youtube_url(
+-                    youtube_url=video_url,
+-                    language=languages,
+-                    add_video_info=True,
+-                    continue_on_failure=True
+-                )
+-                # Load transcript and extract text
+-                documents = loader.load()
+-                if documents:
+-                    transcript_text = documents[0].page_content
++                transcript_text = fetch_transcript(video_url)
++                if transcript_text:
+                     cleaned_content = clean_text(transcript_text)
+-                    vector = embeddings.embed_documents(
++                    vector = get_embeddings().embed_documents(
+                         [cleaned_content],
+-                        task_type="retrieval_document"
++                        task_type="retrieval_document",
++                        output_dimensionality=768
+                     )[0]
+                     # Use provided metadata and add video metadata from document if available
+                     cleaned_metadata = {
+@@ -221,9 +218,10 @@ async def serve(read, write, options):
+                     return [TextContent(type="text", text="No transcript found for this video.")]
+                 
+             elif name == "search-transcripts":
+-                query_vector = embeddings.embed_query(
++                query_vector = get_embeddings().embed_query(
+                     arguments["query"],
+-                    task_type="retrieval_query"
++                    task_type="retrieval_query",
++                    output_dimensionality=768
+                 )
+                 results = videos_table.search(
+                     query_vector
+@@ -244,7 +242,7 @@ async def serve(read, write, options):
+                 
+         except Exception as e:
+             logger.error(f"Error handling tool call: {e}", exc_info=True)
+-            raise McpError(INVALID_PARAMS, str(e))
++            raise McpError(ErrorData(code=INVALID_PARAMS, message=str(e)))
+ 
+     # Create initialization options
+     options = server.create_initialization_options()

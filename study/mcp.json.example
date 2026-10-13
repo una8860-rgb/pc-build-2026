@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "youtube": {
+      "command": "C:\\Users\\admin\\.local\\bin\\uv.exe",
+      "args": ["--directory", "C:\\Users\\admin\\Desktop\\halla\\youtube-mcp", "run", "server.py"],
+      "env": { "PYTHONIOENCODING": "utf-8" }
+    },
+    "firecrawl": {
+      "command": "node",
+      "args": [
+        "--env-file=C:\\Users\\admin\\Desktop\\halla\\.env",
+        "C:\\Users\\admin\\Desktop\\halla\\mcp-servers\\firecrawl\\node_modules\\firecrawl-mcp\\dist\\index.js"
+      ]
+    }
+  }
+}
