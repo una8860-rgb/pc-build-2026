@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC 부품 견적</title>
+<meta name="description" content="2026년 10월 영상편집·3D·게임용 조립 PC 견적 (본체 150~200만원, 다나와 최저가 기준)">
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --text: #1d1d1f; --muted: #6b6b70;
+    --line: #e4e4e0; --accent: #2f6fde; --accent-bg: #eaf1fd; --warn: #b35c00; --warn-bg: #fff4e5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+      --line: #2e2e33; --accent: #7aa7ff; --accent-bg: #1b2740; --warn: #ffb35c; --warn-bg: #33250f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141416; --card: #1d1d20; --text: #ececee; --muted: #9a9aa2;
+    --line: #2e2e33; --accent: #7aa7ff; --accent-bg: #1b2740; --warn: #ffb35c; --warn-bg: #33250f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; }
+  h2 { font-size: 1.25rem; margin: 40px 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .card.pick { border: 2px solid var(--accent); }
+  .tag { display: inline-block; font-size: .8rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); margin-bottom: 8px; }
+  .card h3 { margin: 0 0 4px; font-size: 1.15rem; }
+  .total { font-size: 1.5rem; font-weight: 700; margin: 4px 0 12px; }
+  .total small { font-size: .9rem; font-weight: 400; color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: .85rem; }
+  td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td.part { white-space: nowrap; color: var(--muted); }
+  a { color: var(--accent); }
+  .note { background: var(--warn-bg); color: var(--text); border-left: 4px solid var(--warn); padding: 12px 16px; border-radius: 8px; margin: 16px 0; }
+  ul { padding-left: 20px; }
+  li { margin: 6px 0; }
+  .price-cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .price-cmp div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .price-cmp b { display: block; font-size: 1.2rem; }
+  .price-cmp span { color: var(--muted); font-size: .85rem; }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 48px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>조립 PC 견적 — 영상편집 · 3D · 게임</h1>
+  <p class="sub">본체 예산 150~200만원 · 모니터/주변기기 제외 · 다나와 최저가 기준 (2026-10-13 조회)</p>
+
+  <div class="note">
+    <b>지금 시장 상황:</b> 메모리·SSD·그래픽카드 가격이 크게 올랐습니다. DDR5 32GB가 60만원대라서,
+    <b>DDR4 플랫폼으로 램 값을 방어</b>하는 것이 이번 견적의 핵심입니다.
+  </div>
+
+  <div class="price-cmp">
+    <div><span>DDR5 32GB (16GB×2)</span><b>약 61~68만원</b></div>
+    <div><span>DDR4 32GB (16GB×2)</span><b>약 28~36만원</b></div>
+    <div><span>RTX 5060 Ti 16GB</span><b>약 95.5만원</b></div>
+    <div><span>NVMe SSD 1TB</span><b>약 31.6만원</b></div>
+  </div>
+
+  <h2>추천 견적</h2>
+
+  <div class="card pick">
+    <span class="tag">추천 · 편집/3D 우선</span>
+    <h3>A. i5-14400 + RTX 5060 Ti 16GB + DDR4 32GB</h3>
+    <div class="total">약 208만원 <small>· 14400F로 바꾸면 약 204만원</small></div>
+    <div class="table-wrap">
+    <table>
+      <tr><th>부품</th><th>제품</th><th>실구매가</th></tr>
+      <tr><td class="part">CPU</td><td><a href="https://prod.danawa.com/info/?pcode=32038580">인텔 i5-14400</a> (내장그래픽·퀵싱크 포함)</td><td class="num">259,500원</td></tr>
+      <tr><td class="part">메인보드</td><td><a href="https://prod.danawa.com/info/?pcode=18651560">GIGABYTE B760M DS3H D4</a></td><td class="num">119,500원</td></tr>
+      <tr><td class="part">램</td><td><a href="https://prod.danawa.com/info/?pcode=28775711">HIKSEMI DDR4-3200 16GB</a> × 2</td><td class="num">약 278,500원</td></tr>
+      <tr><td class="part">그래픽카드</td><td><a href="https://prod.danawa.com/info/?pcode=101725832">COLORFUL RTX 5060 Ti GAMING DUO 16GB</a></td><td class="num">955,000원</td></tr>
+      <tr><td class="part">SSD</td><td><a href="https://prod.danawa.com/info/?pcode=69869543">삼성 990 EVO Plus 1TB</a></td><td class="num">315,750원</td></tr>
+      <tr><td class="part">CPU 쿨러</td><td><a href="https://prod.danawa.com/info/?pcode=16525058">Thermalright Peerless Assassin 120 SE</a></td><td class="num">39,890원</td></tr>
+      <tr><td class="part">파워</td><td><a href="https://prod.danawa.com/info/?pcode=72979889">마이크로닉스 Classic II 650W</a></td><td class="num">60,500원</td></tr>
+      <tr><td class="part">케이스</td><td><a href="https://prod.danawa.com/info/?pcode=102621416">DAVEN D7 Mesh</a></td><td class="num">51,900원</td></tr>
+    </table>
+    </div>
+    <p>호환성 확인: 쿨러 높이 155mm (케이스 한도 170mm), 그래픽카드 길이 200mm (한도 400mm), M-ATX 보드 → ATX 케이스, 파워 650W (그래픽카드 권장 600W 이상).</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">예산 내</span>
+    <h3>B. 같은 구성 + RTX 5060 8GB</h3>
+    <div class="total">약 177만원 <small>· 남는 돈으로 SSD 2TB 업그레이드 시 약 191만원</small></div>
+    <p>그래픽카드만 <a href="https://prod.danawa.com/info/?pcode=90956033">MSI RTX 5060 벤투스 2X OC 8GB</a> (640,000원)으로 변경.
+    게임·컷편집은 충분하지만, 무거운 3D 장면에서는 그래픽 메모리 8GB가 부족할 수 있습니다.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">참고</span>
+    <h3>C. 최신 플랫폼: 울트라5 250K Plus + DDR5 32GB + RTX 5060 Ti 16GB</h3>
+    <div class="total">약 250만원</div>
+    <p>영상편집 유튜버들이 가장 많이 추천하는 CPU(<a href="https://prod.danawa.com/info/?pcode=108424451">250K Plus</a>, 309,800원)지만
+    DDR5 전용이라 램에서만 약 33만원이 더 듭니다. 예산이 넉넉하면 이쪽이 업그레이드 여지가 더 큽니다.</p>
+  </div>
+
+  <h2>구매 팁</h2>
+  <ul>
+    <li><b>표의 최저가는 모두 현금(계좌이체) 가격</b>입니다. 카드 결제는 부품마다 몇 % 더 비쌉니다.</li>
+    <li><b>한 쇼핑몰에서 몰아서 구매</b>하면 배송비가 줄어듭니다. 컴나무 · 요테크 · 씨앤씨유통이 대부분 부품에서 최저가 근처입니다. (표 합계는 부품별 배송비를 각각 넣은 보수적인 금액)</li>
+    <li><b>조립 후 메인보드 BIOS를 최신으로 업데이트</b>하세요. 14세대 인텔 CPU 불안정 문제를 고친 마이크로코드가 들어 있습니다.</li>
+    <li>LGA1700 소켓은 다음 세대 인텔 CPU를 지원하지 않습니다. CPU만 교체하는 업그레이드는 어렵지만, 대신 지금 가장 저렴합니다.</li>
+    <li>RTX 50 시리즈는 4:2:2 10bit 영상 하드웨어 디코딩을 지원해서, 내장그래픽 없는 F 모델을 써도 편집 손해가 크지 않습니다.</li>
+    <li>그래픽카드 공급가가 더 오를 수 있다는 업계 이야기가 있어, 구매를 너무 미루지 않는 것이 좋습니다.</li>
+    <li>Windows 라이선스는 합계에 포함되지 않았습니다.</li>
+  </ul>
+
+  <h2>참고 자료</h2>
+  <ul>
+    <li><a href="https://www.youtube.com/watch?v=els2IiiaeTo">컴퓨터공간 — 2026년 10월 월간 조립 컴퓨터 추천 견적</a></li>
+    <li><a href="https://www.youtube.com/watch?v=YpWFU-AO9Jc">백스컴 — 영상편집용 컴퓨터 사양 6가지</a></li>
+    <li><a href="https://www.youtube.com/watch?v=O52qX8PgSCo">코어 울트라 Plus 영상편집 성능 테스트 및 추천 견적</a></li>
+    <li><a href="https://www.danawa.com/">다나와</a> 가격비교 (쇼핑몰별 배송비 포함 실구매가)</li>
+  </ul>
+
+  <footer>가격은 2026-10-13 다나와 조회 시점 기준이며 수시로 바뀝니다. 구매 전 링크에서 최신 가격을 확인하세요.</footer>
+</main>
+</body>
+</html>
